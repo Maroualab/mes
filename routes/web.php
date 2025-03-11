@@ -7,7 +7,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/index', [ArticleController::class,'create'])->name('home');
+Route::get('/index', [ArticleController::class,'create'])->name('articles.create');
 Route::post('/index', [ArticleController::class,'store'])->name('articles.store');
 Route::post('/index/edit/{article:id}', [ArticleController::class,'edit'])->name('articles.edit');
 Route::post('/index/edit/{article:id}', [ArticleController::class,'update'])->name('articles.update');

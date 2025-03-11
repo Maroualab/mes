@@ -23,8 +23,9 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        $tags = Tag::all(); // Get all tags for the article creation
-        return view('articles.create', compact('tags'));
+        
+        $tags = Tag::all();
+        return view('home', compact('tags'));
     }
 
     /**
