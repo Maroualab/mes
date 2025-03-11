@@ -3,78 +3,68 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use App\Http\Requests\StoreArticleRequest;
-use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Tag;
+use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $articles = Article::with('tags')->get();
-        return view('articles.index', compact('articles'));
+        $articles = Article::all();  
+        $tags = Tag::all();  
+        return view('home', compact('articles','tags'));  
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        
-        $tags = Tag::all();
-        return view('home', compact('tags'));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreArticleRequest $request)
-    {
-        Article::create($request->all());
-        return redirect()->route('home');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Article $article)
-    {
-        
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Article $article)
     {
-      
-        $tags = Tag::all();
-        return view('articles.edit', compact('article', 'tags'));
+        $articles = Article::all();  
+        $tags = Tag::all();  
+        return view('home', compact('article','articles','tags')); 
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateArticleRequest $request, Article $article)
+    
+    public function store(Request $request)
     {
-        $article->name=$request->name;
-        $article->save();
-        return redirect()->route('home');
+        $request->validate([
+            'name' => 'required|string|max:255',  
+            'content' => 'required|string',  
+            'tags' => 'nullable|array',  
+        ]);
+    
+        $article = Article::create($request->all());
+    
+        if ($request->has('tags')) {
+            $article->tags()->sync($request->tags);  
+        }
+    
+        return redirect()->route('articles.index')->with('success', 'Article created successfully!');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Article $article)
+    
+    
+    public function update(Request $request, Article $article)
     {
-        
-        $article->tags()->detach(); 
-        $article->delete();
+        $request->validate([
+            'name' => 'required',
+            'content' => 'required',
+            'tags' => 'array',
+        ]);
+    
+        $article->update($request->only('name', 'content'));
+    
+        if ($request->has('tags')) {
+            $article->tags()->sync($request->tags);
+        }
+    
         return redirect()->route('articles.index');
     }
+    
+    public function destroy(Article $article)
+    {
+        $article->tags()->detach(); 
+        $article->delete(); 
+        return redirect()->route('articles.index');
+    }
+    
 }
-
-

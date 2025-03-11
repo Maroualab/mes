@@ -7,9 +7,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/index', [ArticleController::class,'create'])->name('articles.create');
-Route::post('/index', [ArticleController::class,'store'])->name('articles.store');
-Route::post('/index/edit/{article:id}', [ArticleController::class,'edit'])->name('articles.edit');
-Route::post('/index/edit/{article:id}', [ArticleController::class,'update'])->name('articles.update');
-Route::delete('/index/delete/{article:id}', [ArticleController::class,'destroy'])->name('articles.delete');
+Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
+Route::get('/articles/create', [ArticleController::class, 'create'])->name('articles.create');
+Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
+Route::get('/articles/{article}', [ArticleController::class, 'edit'])->name('articles.edit');  
+Route::put('/articles/{article}', [ArticleController::class, 'update'])->name('articles.update');
+Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
+
 
